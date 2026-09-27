@@ -1,7 +1,7 @@
 """LLM boundary tests: fail-closed, verifier strictness, injection containment.
 
-These tests never call the real Gemini API — the layer is designed to be
-testable offline (flag off, missing key, and a fake _call_gemini).
+These tests never call the real LLM API — the layer is designed to be
+testable offline (flag off, missing key, and fake provider calls).
 """
 from __future__ import annotations
 
@@ -49,7 +49,7 @@ def test_missing_key_fails_closed():
 def test_api_failure_falls_back(monkeypatch):
     def boom(prompt, cfg, session):
         raise RuntimeError("network down")
-    monkeypatch.setattr(llm_feedback, "_call_gemini", boom)
+    monkeypatch.setattr(llm_feedback, "_call_llm", boom)
     result = rewrite_findings([_finding()], config=_cfg())
     assert result.error and "network down" not in result.error or result.error  # error recorded
     assert all(item.llm_text is None and item.fallback_used for item in result.items)
@@ -63,7 +63,7 @@ def test_prompt_contains_delimited_redacted_evidence_only(monkeypatch):
         captured["prompt"] = prompt
         return "1. rewritten sentence"
 
-    monkeypatch.setattr(llm_feedback, "_call_gemini", fake_call)
+    monkeypatch.setattr(llm_feedback, "_call_llm", fake_call)
     f = _finding()
     rewrite_findings([f], config=_cfg())
     prompt = captured["prompt"]
@@ -117,7 +117,7 @@ def test_injection_bullet_is_treated_as_data(monkeypatch):
         captured["prompt"] = prompt
         return "1. This bullet lists duties; consider quantifying outcomes."
 
-    monkeypatch.setattr(llm_feedback, "_call_gemini", fake_call)
+    monkeypatch.setattr(llm_feedback, "_call_llm", fake_call)
     f = Finding(
         kind="vague_bullet",
         message="Bullet on line 8 reads as a duty rather than an achievement.",

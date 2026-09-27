@@ -15,6 +15,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+import json
+
 from cv_analyzer.config import Config, DEFAULT_CONFIG
 from cv_analyzer.models import Finding
 from cv_analyzer.security.rate_limit import RateLimitExceeded, RateLimiter, enforce
@@ -79,6 +81,59 @@ def _build_user_prompt(findings: list[Finding], language: str) -> str:
     )
 
 
+def _call_openai_router(prompt: str, cfg: Config, session_key: str) -> str:
+    """Call an OpenAI-compatible endpoint (self-hosted router, proxy, or gateway).
+
+    Uses httpx directly (already a transitive dep of google-genai/streamlit) to
+    avoid adding a provider SDK. The router sends its system prompt inside the
+    message list — same content as the Gemini path's system_instruction.
+    """
+    enforce(GLOBAL_LIMITER, session_key)
+    if not cfg.llm_base_url:
+        raise RuntimeError("LLM_BASE_URL is not configured for the openai provider")
+    import httpx
+
+    url = cfg.llm_base_url.rstrip("/") + "/chat/completions"
+    headers = {"Authorization": f"Bearer {cfg.gemini_api_key}"}
+    payload = {
+        "model": cfg.gemini_model,
+        "messages": [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": prompt},
+        ],
+        "temperature": cfg.llm_temperature,
+        "max_tokens": cfg.llm_max_output_tokens,
+        "stream": False,   # some routers stream SSE regardless; False preferred
+    }
+    response = httpx.post(url, headers=headers, json=payload, timeout=cfg.llm_timeout_seconds)
+    response.raise_for_status()
+    if "text/event-stream" in response.headers.get("content-type", ""):
+        text = _parse_sse(response.text)
+    else:
+        data = response.json()
+        text = data["choices"][0]["message"]["content"] or ""
+    if not text.strip():
+        raise RuntimeError("empty response from LLM router")
+    return text.strip()
+
+
+def _parse_sse(raw: str) -> str:
+    """Extract content from an SSE chat.completion.chunk stream (router fallback)."""
+    parts: list[str] = []
+    for line in raw.splitlines():
+        line = line.strip()
+        if not line.startswith("data: ") or "[DONE]" in line:
+            continue
+        try:
+            chunk = json.loads(line[6:])
+            delta = chunk["choices"][0].get("delta", {}).get("content")
+            if delta:
+                parts.append(delta)
+        except (json.JSONDecodeError, KeyError, IndexError, TypeError):
+            continue
+    return "".join(parts)
+
+
 def _call_gemini(prompt: str, cfg: Config, session_key: str) -> str:
     enforce(GLOBAL_LIMITER, session_key)   # raises RateLimitExceeded when throttled
     from google import genai  # imported lazily: only needed when the flag is on
@@ -97,6 +152,13 @@ def _call_gemini(prompt: str, cfg: Config, session_key: str) -> str:
     if not text:
         raise RuntimeError("empty response from Gemini")
     return text
+
+
+def _call_llm(prompt: str, cfg: Config, session_key: str) -> str:
+    """Dispatch to the configured provider. Both paths share the limiter + fences."""
+    if cfg.llm_provider == "gemini":
+        return _call_gemini(prompt, cfg, session_key)
+    return _call_openai_router(prompt, cfg, session_key)
 
 
 def _parse_numbered_lines(text: str, expected: int) -> list[str]:
@@ -148,7 +210,7 @@ def rewrite_findings(
 
     prompt = _build_user_prompt(findings, language)
     try:
-        raw = _call_gemini(prompt, cfg, session_key)
+        raw = _call_llm(prompt, cfg, session_key)
     except RateLimitExceeded as exc:
         return LLMFeedbackResult(items=[], model=cfg.gemini_model, params=params,
                                  error=f"rate limited: {exc}")

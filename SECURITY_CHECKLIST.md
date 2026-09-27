@@ -36,10 +36,17 @@
       logs carry no CV content (verified: no `print`/`logging` of text anywhere).
 - [x] No persistent storage of uploads beyond the session (in-memory processing only;
       nothing written to disk except the transient docx temp file, deleted on exit).
-- [x] Redaction of email/phone/URL/header-name before ANY text reaches Gemini —
-      including quoted evidence spans inside prompts
+- [x] Redaction of email/phone/URL/header-name before ANY text reaches the LLM —
+      including quoted evidence spans inside prompts, for BOTH providers
       (`security/redact.py` + `explain/llm_feedback.py::_build_user_prompt`; tests:
       `test_prompt_contains_delimited_redacted_evidence_only`, redaction tests).
+- [x] **Third-party router disclosure:** when `LLM_PROVIDER=openai`, requests (key +
+      redacted findings only) pass through the configured OpenAI-compatible endpoint
+      before reaching the upstream model. Only already-redacted, structured Finding
+      data leaves the pipeline — the raw CV never does. Verified end-to-end with the
+      verifier accepting 4/4 router-rewritten findings. Using a self-hosted or
+      trusted router is preferred; using a third-party router should be disclosed in
+      the thesis methodology section.
 
 ## Prompt injection
 

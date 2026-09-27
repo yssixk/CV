@@ -53,6 +53,8 @@ def _setting(name: str):
 class Config:
     # --- LLM feedback layer (Phase 8) — fenced, OFF by default -------------
     use_llm_feedback: bool = False
+    llm_provider: str = "openai"          # "openai" (OpenAI-compatible router) | "gemini"
+    llm_base_url: str = ""                # OpenAI-compatible base URL, e.g. https://host/v1
     gemini_api_key: str = field(default="", repr=False)   # never logged, never serialized
     gemini_model: str = "gemini-2.0-flash"
     llm_temperature: float = 0.0
@@ -124,6 +126,8 @@ class Config:
 
         return cls(
             use_llm_feedback=_bool("USE_LLM_FEEDBACK", False),
+            llm_provider=_str("LLM_PROVIDER", "openai"),
+            llm_base_url=_str("LLM_BASE_URL", ""),
             gemini_api_key=str(api_key),
             gemini_model=_str("GEMINI_MODEL", "gemini-2.0-flash"),
             llm_temperature=_float("LLM_TEMPERATURE", 0.0),

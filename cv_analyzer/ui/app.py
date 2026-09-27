@@ -132,8 +132,10 @@ def _llm_panel() -> None:
     items = st.session_state.get("llm_items")
     if items:
         meta = st.session_state.get("llm_meta", {})
-        st.caption(f"model: {meta.get('model')} · temperature: {meta.get('temperature')} · "
-                   f"params logged for reproducibility")
+        provider = DEFAULT_CONFIG.llm_provider
+        provider_note = ("OpenAI-compatible router" if provider == "openai" else "Google Gemini")
+        st.caption(f"provider: {provider_note} · model: {meta.get('model')} · "
+                   f"temperature: {meta.get('temperature')} · params logged for reproducibility")
         for item in items:
             st.markdown(f"**Template:** {item.original_message}")
             if item.llm_text:
