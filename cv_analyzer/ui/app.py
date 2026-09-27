@@ -153,35 +153,47 @@ def _llm_diagnostics() -> None:
     Exists because 'the LLM tab says disabled' has too many possible causes
     (secrets not saved, app not restarted, typo'd key name...). This makes the
     truth visible in the UI instead of guesswork. Displays no secret values.
+
+    Uses getattr fallbacks throughout: if Streamlit hot-reloads app.py while an
+    older cv_analyzer.config module is still cached in the process, missing
+    attributes degrade to 'unknown' instead of crashing the whole app.
     """
     with st.expander("LLM diagnostics (what does this app actually see?)"):
         cfg = DEFAULT_CONFIG
+        use_llm = getattr(cfg, "use_llm_feedback", None)
+        provider = getattr(cfg, "llm_provider", "unknown (config module outdated — reboot the app)")
+        api_key = getattr(cfg, "gemini_api_key", "") or ""
+        model = getattr(cfg, "gemini_model", "unknown")
+        base_url = getattr(cfg, "llm_base_url", "") or ""
+        timeout_s = getattr(cfg, "llm_timeout_seconds", "?")
+
         c1, c2 = st.columns(2)
-        c1.metric("USE_LLM_FEEDBACK", str(cfg.use_llm_feedback))
-        c2.metric("Provider", cfg.llm_provider)
+        c1.metric("USE_LLM_FEEDBACK", str(use_llm))
+        c2.metric("Provider", str(provider))
         st.write({
-            "GEMINI_API_KEY present": bool(cfg.gemini_api_key),
-            "key length": len(cfg.gemini_api_key),
-            "key prefix": (cfg.gemini_api_key[:6] + "…") if cfg.gemini_api_key else "—",
-            "model": cfg.gemini_model,
-            "base URL": cfg.llm_base_url or "—",
-            "timeout (s)": cfg.llm_timeout_seconds,
+            "GEMINI_API_KEY present": bool(api_key),
+            "key length": len(api_key),
+            "key prefix": (api_key[:6] + "…") if api_key else "—",
+            "model": model,
+            "base URL": base_url or "—",
+            "timeout (s)": timeout_s,
         })
         st.caption("Values come from environment variables and/or Streamlit secrets. "
                    "If USE_LLM_FEEDBACK is False or the key is absent, save the secrets "
-                   "(Manage app → Settings → Secrets) and let the app restart.")
+                   "(Manage app → Settings → Secrets) and let the app restart. "
+                   "If Provider shows 'unknown', the app process predates the latest code — "
+                   "Manage app → ⋮ → Reboot forces a clean reload.")
         if st.button("Test router connection"):
-            if not (cfg.use_llm_feedback and cfg.gemini_api_key and cfg.llm_base_url
-                    and cfg.llm_provider == "openai"):
+            if not (use_llm and api_key and base_url and provider == "openai"):
                 st.error("Provider not fully configured — fix the secrets above first.")
             else:
                 import httpx
 
                 try:
                     resp = httpx.post(
-                        cfg.llm_base_url.rstrip("/") + "/chat/completions",
-                        headers={"Authorization": f"Bearer {cfg.gemini_api_key}"},
-                        json={"model": cfg.gemini_model,
+                        base_url.rstrip("/") + "/chat/completions",
+                        headers={"Authorization": f"Bearer {api_key}"},
+                        json={"model": model,
                               "messages": [{"role": "user", "content": "Reply with exactly: PONG"}],
                               "temperature": 0, "max_tokens": 10, "stream": False},
                         timeout=30,
