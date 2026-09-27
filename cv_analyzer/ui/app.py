@@ -111,6 +111,7 @@ def _llm_panel() -> None:
     """Side-by-side template vs LLM feedback. Gated by config flag + key."""
     st.subheader("LLM feedback layer (experimental)")
     cfg = DEFAULT_CONFIG
+    _llm_diagnostics()
     if not cfg.use_llm_feedback:
         st.caption("Disabled by default (USE_LLM_FEEDBACK=false). Templates below are the graded, "
                    "deterministic output — the LLM layer is optional fluency polish on top.")
@@ -144,6 +145,57 @@ def _llm_panel() -> None:
                 reason = (item.verification or {}).get("reason", "unavailable")
                 st.markdown(f"**LLM:** rejected/failed ({reason}) — template shown instead")
             st.divider()
+
+
+def _llm_diagnostics() -> None:
+    """Show exactly what config the running app sees + live router test.
+
+    Exists because 'the LLM tab says disabled' has too many possible causes
+    (secrets not saved, app not restarted, typo'd key name...). This makes the
+    truth visible in the UI instead of guesswork. Displays no secret values.
+    """
+    with st.expander("LLM diagnostics (what does this app actually see?)"):
+        cfg = DEFAULT_CONFIG
+        c1, c2 = st.columns(2)
+        c1.metric("USE_LLM_FEEDBACK", str(cfg.use_llm_feedback))
+        c2.metric("Provider", cfg.llm_provider)
+        st.write({
+            "GEMINI_API_KEY present": bool(cfg.gemini_api_key),
+            "key length": len(cfg.gemini_api_key),
+            "key prefix": (cfg.gemini_api_key[:6] + "…") if cfg.gemini_api_key else "—",
+            "model": cfg.gemini_model,
+            "base URL": cfg.llm_base_url or "—",
+            "timeout (s)": cfg.llm_timeout_seconds,
+        })
+        st.caption("Values come from environment variables and/or Streamlit secrets. "
+                   "If USE_LLM_FEEDBACK is False or the key is absent, save the secrets "
+                   "(Manage app → Settings → Secrets) and let the app restart.")
+        if st.button("Test router connection"):
+            if not (cfg.use_llm_feedback and cfg.gemini_api_key and cfg.llm_base_url
+                    and cfg.llm_provider == "openai"):
+                st.error("Provider not fully configured — fix the secrets above first.")
+            else:
+                import httpx
+
+                try:
+                    resp = httpx.post(
+                        cfg.llm_base_url.rstrip("/") + "/chat/completions",
+                        headers={"Authorization": f"Bearer {cfg.gemini_api_key}"},
+                        json={"model": cfg.gemini_model,
+                              "messages": [{"role": "user", "content": "Reply with exactly: PONG"}],
+                              "temperature": 0, "max_tokens": 10, "stream": False},
+                        timeout=30,
+                    )
+                    if resp.status_code == 200:
+                        from cv_analyzer.explain.llm_feedback import _parse_sse
+                        body = resp.json()["choices"][0]["message"]["content"] \
+                            if "application/json" in resp.headers.get("content-type", "") \
+                            else _parse_sse(resp.text)
+                        st.success(f"Router reachable — model replied: {body[:40]!r}")
+                    else:
+                        st.error(f"Router returned HTTP {resp.status_code}: {resp.text[:120]}")
+                except Exception as exc:  # noqa: BLE001 - diagnostics must not crash the app
+                    st.error(f"Router unreachable: {type(exc).__name__}: {exc}")
 
 
 def main() -> None:
