@@ -28,7 +28,7 @@ from cv_analyzer.explain.llm_verifier import verify_llm_result
 from cv_analyzer.explain.report_builder import build_report
 from cv_analyzer.ingest.extract_text import IngestError, ingest_bytes, ingest_text
 
-st.set_page_config(page_title="CV Quality Coach", page_icon="📄", layout="wide")
+st.set_page_config(page_title="CV Quality Coach", page_icon=None, layout="wide")
 
 MAX_DISPLAY_FINDINGS = 50
 
@@ -233,9 +233,8 @@ def _llm_diagnostics() -> None:
 
 
 def main() -> None:
-    st.title("📄 CV Quality Coach")
-    st.caption("Evidence-grounded, advisory CV feedback. Your CV is analyzed locally; "
-               "nothing is stored after your session ends.")
+    st.title("CV Quality Coach")
+    st.caption("No CV Stored only processed")
 
     tab_analyze, tab_llm = st.tabs(["Analyze CV", "LLM feedback (experimental)"])
 
