@@ -52,6 +52,8 @@
    - **Repository:** `<your-username>/<repo-name>`
    - **Branch:** `main`
    - **Main file path:** `cv_analyzer/ui/app.py`  ← exactly this
+   - **Python version (Advanced settings):** pick **3.11 or newer** (3.13 works;
+     torch 2.14 wheels need ≥3.10 — don't leave an old default)
 
 6. Click **Deploy**. First build takes ~5–10 minutes (it installs torch CPU +
    ~84 pinned packages, then boots). Watch the build log; "Deployed" appears
@@ -129,6 +131,8 @@
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
+| `E: Unable to locate package ...` at the apt step | `packages.txt` contains comment text — the platform pipes **every line** to `apt-get install` | Keep `packages.txt` empty (0 bytes); this project needs no apt packages |
+| Build fails installing torch (`No matching distribution`) | App Python version too old for `torch==2.14.0+cpu` | Re-create the app with **Python 3.11+** in "Advanced settings" (or lower the torch pin) |
 | Build fails on torch | The `--extra-index-url` line was removed from `requirements.txt` | Restore the first line of requirements.txt |
 | App crashes on startup | `Main file path` wrong | Must be `cv_analyzer/ui/app.py` |
 | Memory error / OOM kill | NER layer enabled on the free tier | Set `NLP_EXTRACTOR_ENABLED = false` in secrets (step 7) |
