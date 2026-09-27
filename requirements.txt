@@ -1,0 +1,38 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# Core
+numpy==2.3.4
+pandas==2.3.3
+scikit-learn==1.7.2
+regex==2025.9.1
+
+# Ingestion
+pypdf==6.1.1
+pdfminer.six==20250506
+python-docx==1.2.0
+
+# NER tokenizer (XLM-R checkpoint ships slow sentencepiece weights only)
+sentencepiece==0.2.1
+
+# Language identification
+langdetect==1.0.9
+
+# Semantic layer (multilingual sentence embeddings)
+# The +cpu local-version pin exists ONLY on the PyTorch index (declared above),
+# so Linux hosts (Streamlit Cloud/Render) get the small CPU build, never the
+# ~2 GB CUDA wheels from PyPI.
+torch==2.14.0+cpu
+sentence-transformers==5.1.0
+
+# Report / UI
+streamlit==1.50.0
+
+# Optional LLM feedback layer (fenced, off by default)
+google-genai==1.38.0
+
+# Config / testing
+python-dotenv==1.1.1
+pytest==8.4.2
+
+# For the exact tested environment (including torch CPU build), see requirements-frozen.txt
+

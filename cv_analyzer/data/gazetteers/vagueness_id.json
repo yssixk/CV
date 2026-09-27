@@ -1,0 +1,6 @@
+{
+  "fuzzy_quantifiers": ["berbagai", "beberapa", "banyak", "sebagian", "macam-macam", "dll", "dan lain-lain", "antara lain"],
+  "duty_phrases": ["bertanggung jawab", "bertanggung jawab atas", "tugas", "tugas saya", "menangani", "membantu", "membantu dalam", "mengerjakan", "terlibat dalam", "ikut serta", "berpartisipasi dalam", "mengikuti", "memastikan", "berpengalaman dalam", "mengetahui", "menangani hal"],
+  "hedges": ["mencoba untuk", "berusaha untuk", "agak", "cukup"],
+  "unquantified_claims": ["sangat baik", "ahli", "menguasai", "berpengalaman luas", "lulusan terbaik", "pekerja keras", "mampu bekerja", "cepat belajar", "semangat", "berdedikasi", "jujur", "disiplin"]
+}

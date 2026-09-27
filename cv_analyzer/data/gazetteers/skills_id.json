@@ -1,0 +1,20 @@
+{
+  "Python": ["python"],
+  "JavaScript": ["javascript", "js"],
+  "PHP": ["php"],
+  "MySQL": ["mysql"],
+  "Laravel": ["laravel"],
+  "Django": ["django"],
+  "Microsoft Office": ["microsoft office", "ms office", "ms word", "microsoft word", "ms excel", "microsoft excel", "ms power point", "microsoft power point", "ms powerpoint", "microsoft powerpoint"],
+  "Communication": ["komunikasi", "kemampuan komunikasi"],
+  "Teamwork": ["kerja sama", "kerja tim", "kemampuan bekerja dalam tim", "bekerja dalam tim"],
+  "Leadership": ["kepemimpinan", "memimpin tim"],
+  "Problem Solving": ["pemecahan masalah", "penyelesaian masalah", "berpikir analitis"],
+  "Data Analysis": ["analisis data", "analisa data"],
+  "Machine Learning": ["pembelajaran mesin", "machine learning"],
+  "NLP": ["pemrosesan bahasa alami", "nlp"],
+  "Public Speaking": ["public speaking", "berbicara di depan umum"],
+  "Time Management": ["manajemen waktu", "pengelolaan waktu"],
+  "Attention to Detail": ["teliti", "ketelitian", "cermat"],
+  "Adaptability": ["adaptif", "dapat beradaptasi", "mampu beradaptasi"]
+}

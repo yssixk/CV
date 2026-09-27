@@ -1,0 +1,23 @@
+BUDI SANTOSO
+budi.santoso@example.com | +62 812-3456-7890 | Jakarta
+
+SUMMARY
+Excellent communicator and hard worker with extensive experience in data analysis.
+
+SKILLS
+Python, SQL, Machine Learning, Tableau, Communication
+
+EXPERIENCE
+Data Analyst, Acme Corp
+Jun 2021 - Present
+- Responsible for various reports and dashboards for the sales team.
+- Reduced report generation time by 40% by automating the pipeline with Python.
+- Helped with data cleaning tasks and other duties as assigned.
+
+Junior Analyst, Beta Ltd
+Jan 2020 - May 2021
+- Worked on monthly sales data and assisted with ad-hoc requests.
+- Built an automated Excel workbook that cut manual consolidation from 6 hours to 30 minutes.
+
+EDUCATION
+BSc in Statistics, University of Indonesia, 2019, GPA 3.65

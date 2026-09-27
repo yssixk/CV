@@ -1,0 +1,15 @@
+[project]
+name = "cv-analyzer"
+version = "0.1.0"
+description = "Evidence-grounded, bilingual (EN/ID) CV quality analysis with NLP — university thesis project"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
+
+[tool.setuptools]
+packages = ["cv_analyzer"]

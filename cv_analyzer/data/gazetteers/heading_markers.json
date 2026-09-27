@@ -1,0 +1,20 @@
+{
+  "en": {
+    "section_names": {
+      "SUMMARY": ["SUMMARY", "PROFESSIONAL SUMMARY", "PROFILE", "OBJECTIVE", "ABOUT ME", "PERSONAL PROFILE", "OVERVIEW", "HIGHLIGHTS"],
+      "EXPERIENCE": ["WORK EXPERIENCE", "PROFESSIONAL EXPERIENCE", "EXPERIENCE", "EMPLOYMENT HISTORY", "WORK HISTORY", "INTERNSHIP", "INTERNSHIPS", "VOLUNTEER EXPERIENCE", "ORGANIZATIONAL EXPERIENCE"],
+      "EDUCATION": ["EDUCATION", "ACADEMIC BACKGROUND", "ACADEMIC HISTORY", "ACADEMIC QUALIFICATIONS", "EDUCATIONAL BACKGROUND"],
+      "SKILLS": ["SKILLS", "TECHNICAL SKILLS", "CORE SKILLS", "KEY SKILLS", "COMPETENCIES", "CORE COMPETENCIES", "EXPERTISE", "TECHNOLOGIES", "CERTIFICATIONS", "LANGUAGES"]
+    },
+    "line_patterns": ["^(summary|profile|objective|about( me)?|highlights|overview)$", "^(work|professional|employment|career|relevant|organizational|volunteer)( .*)?experience$", "^education( and .*)?$", "^(technical |core |key )?skills$|^competencies$|^expertise$|^certifications?$|^languages$"]
+  },
+  "id": {
+    "section_names": {
+      "SUMMARY": ["RINGKASAN", "RINGKASAN PROFESIONAL", "PROFIL", "PROFIL SINGKAT", "TENTANG SAYA", "TENTANG", "TUJUAN", "TUJUAN KARIER", "SASARAN"],
+      "EXPERIENCE": ["PENGALAMAN KERJA", "PENGALAMAN PROFESIONAL", "PENGALAMAN", "RIWAYAT PEKERJAAN", "PENGALAMAN ORGANISASI", "PENGALAMAN MAGANG", "MAGANG", "PENGABDIAN"],
+      "EDUCATION": ["PENDIDIKAN", "RIWAYAT PENDIDIKAN", "LATAR BELAKANG PENDIDIKAN", "PENDIDIKAN FORMAL"],
+      "SKILLS": ["KEAHLIAN", "KETERAMPILAN", "KEAHLIAN TEKNIS", "KETERAMPILAN TEKNIS", "KOMPETENSI", "TOOLS", "TEKNOLOGI", "SERTIFIKASI", "BAHASA"]
+    },
+    "line_patterns": ["^(ringkasan|profil|tentang( saya)?|tujuan|sasaran)$", "^pengalaman( .*)?$|^riwayat pekerjaan$", "^riwayat pendidikan$|^pendidikan$", "^(keahlian|keterampilan|kompetensi|tools|teknologi|sertifikasi|bahasa)$"]
+  }
+}

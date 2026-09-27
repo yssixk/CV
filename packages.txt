@@ -1,0 +1,3 @@
+# Streamlit Community Cloud: apt packages needed at build/run time.
+# torch (CPU) bundles everything it needs; nothing else requires system libs.
+# This file exists so the build uses apt explicitly rather than failing at runtime.

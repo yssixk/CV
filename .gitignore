@@ -1,0 +1,38 @@
+# Secrets & local config — never commit
+.env
+*.key
+secrets.toml
+.streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Virtualenv
+.venv/
+venv/
+
+# Personal / consent-gated data: real CVs and corpus-derived texts must never
+# be committed. This includes the gold-set scaffold: its entries embed full CV
+# texts sampled from the (public but excluded) corpus. Keep gold annotations
+# in this folder locally / in private storage only.
+data/gold_set/
+data/uploads/
+data/tmp/
+*.cv.pdf
+!tests/fixtures/**
+
+# Large local datasets — never push the CV corpus to a public repo
+resumes/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

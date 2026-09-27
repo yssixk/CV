@@ -1,0 +1,6 @@
+{
+  "fuzzy_quantifiers": ["various", "several", "multiple", "some", "many", "numerous", "misc", "miscellaneous", "etc"],
+  "duty_phrases": ["responsible for", "duties included", "duties involve", "in charge of", "tasked with", "helped with", "assisted with", "assisted in", "worked on", "involved in", "participated in", "took part in", "support", "handle", "handling", "did", "made sure", "ensuring", "familiar with"],
+  "hedges": ["tried to", "attempted to", "somewhat", "fairly", "quite", "somewhat involved"],
+  "unquantified_claims": ["excellent", "expert", "proficient", "extensive experience", "strong background", "highly skilled", "vast experience", "proven track record", "results-driven", "detail-oriented", "hard worker", "hard-working", "team player", "fast learner", "good knowledge", "deep understanding", "passionate about"]
+}

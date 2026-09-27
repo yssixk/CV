@@ -1,0 +1,17 @@
+AHMAD FAUZI
+ahmad.fauzi@example.com | +62 813-2222-3333 | Bandung
+
+RINGKASAN
+Fresh graduate Teknik Informatika dengan passion di bidang web development.
+
+PENDIDIKAN
+S1 Teknik Informatika, Universitas Padjadjaran, 2024, IPK 3.55
+
+PENGALAMAN KERJA
+Web Developer Intern, Tokopedia
+Feb 2023 - Aug 2023
+- Mengembangkan fitur checkout baru menggunakan React dan TypeScript.
+- Berpartisipasi dalam code review dan sprint planning bersama tim backend.
+
+KEAHLIAN
+JavaScript, React, Node.js, Git, kerja tim, komunikasi
