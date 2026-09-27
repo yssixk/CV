@@ -36,3 +36,5 @@ resumes/
 Thumbs.db
 .idea/
 .vscode/
+~$*            # Office lock files (open documents)
+*.wordclouds/

@@ -36,8 +36,8 @@ def test_cloud_is_deterministic(tmp_path):
     assert p1.read_bytes() == p2.read_bytes()
 
 
-def test_cloud_grayscale_png(tmp_path):
-    """Output must be a valid PNG; palette should be grayscale (no color)."""
+def test_cloud_default_is_color(tmp_path):
+    """Default output: BERWARNA (pengecualian wordcloud) — valid PNG with color."""
     from PIL import Image
 
     p = tmp_path / "wc.png"
@@ -45,10 +45,22 @@ def test_cloud_grayscale_png(tmp_path):
     img = Image.open(p)
     assert img.format == "PNG"
     rgb = img.convert("RGB")
-    # sample pixels: R==G==B for grayscale rendering
     pixels = list(rgb.getdata())[::997]
     colored = [px for px in pixels if px[0] != px[1] or px[1] != px[2]]
-    assert not colored, "found non-gray pixels in a grayscale-mandated figure"
+    assert colored, "default wordcloud should contain colored pixels"
+
+
+def test_cloud_grayscale_option(tmp_path):
+    """grayscale=True still available for a black-and-white figure."""
+    from PIL import Image
+
+    p = tmp_path / "wc_gray.png"
+    generate_skill_cloud(["Python Python Python SQL Machine Learning dashboards"], p,
+                         grayscale=True)
+    img = Image.open(p).convert("RGB")
+    pixels = list(img.getdata())[::997]
+    colored = [px for px in pixels if px[0] != px[1] or px[1] != px[2]]
+    assert not colored, "grayscale option must produce only gray pixels"
 
 
 def test_finding_cloud(tmp_path):

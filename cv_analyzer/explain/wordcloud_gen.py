@@ -1,8 +1,9 @@
 """Wordcloud generation (luaran makalah): frekuensi kata dari hasil analisis CV.
 
-Dua mode, keduanya hitam-putih (kebutuhan format jurnal: tidak boleh ada
-warna) dan deterministik (seed tetap -> gambar identik antar-run, penting
-untuk reproduksibilitas makalah):
+Dua mode, keduanya deterministik (seed tetap -> gambar identik antar-run,
+penting untuk reproduksibilitas makalah). Default keluaran kini BERWARNA
+(pengecualian yang diminta untuk wordcloud); mode grayscale tetap tersedia
+via ``grayscale=True`` bila diperlukan versi hitam-putih:
 
 1. ``generate_skill_cloud``  — dari gabungan teks CV (bobot = frekuensi kata
    konten; alias skill dipetakan ke nama kanonis sehingga "js" dan
@@ -93,8 +94,13 @@ def _render_cloud(
     width: int = 1600,
     height: int = 800,
     title: str = "",
+    grayscale: bool = False,
 ) -> Path:
-    """Render wordcloud hitam-putih ke PNG via matplotlib. Deterministik."""
+    """Render wordcloud ke PNG via matplotlib. Deterministik.
+
+    Default berwarna (viridis); ``grayscale=True`` memakai colormap Greys
+    untuk versi hitam-putih bila diperlukan.
+    """
     if not frequencies:
         raise ValueError("wordcloud butuh minimal satu kata")
     from wordcloud import WordCloud
@@ -106,7 +112,7 @@ def _render_cloud(
         width=width,
         height=height,
         background_color="white",
-        colormap="Greys",          # grayscale — sesuai ketentuan jurnal tanpa warna
+        colormap="Greys" if grayscale else "viridis",
         prefer_horizontal=1.0,
         random_state=42,           # deterministik
         min_font_size=10,
@@ -127,13 +133,17 @@ def _render_cloud(
     return out_path
 
 
-def generate_skill_cloud(cv_texts: list[str], out_path: str | Path) -> Path:
+def generate_skill_cloud(cv_texts: list[str], out_path: str | Path,
+                         grayscale: bool = False) -> Path:
     """Awan kata dari isi CV (skill & istilah teknis paling sering)."""
     freq = word_frequencies(cv_texts, merge_skill_aliases=True)
-    return _render_cloud(freq, Path(out_path), title="Wordcloud isi CV")
+    return _render_cloud(freq, Path(out_path), title="Wordcloud isi CV",
+                         grayscale=grayscale)
 
 
-def generate_finding_cloud(findings: list[Finding], out_path: str | Path) -> Path:
+def generate_finding_cloud(findings: list[Finding], out_path: str | Path,
+                           grayscale: bool = False) -> Path:
     """Awan kata dari pesan temuan sistem (tema keluhan paling sering)."""
     freq = word_frequencies([f.message for f in findings], merge_skill_aliases=False)
-    return _render_cloud(freq, Path(out_path), title="Wordcloud temuan analisis")
+    return _render_cloud(freq, Path(out_path), title="Wordcloud temuan analisis",
+                         grayscale=grayscale)

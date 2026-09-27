@@ -1,9 +1,10 @@
-"""Menghasilkan MAKALAH.docx — format jurnal Sinta, hitam-putih polos.
+"""Menghasilkan MAKALAH.docx — format jurnal Sinta.
 
 Semua gaya eksplisit: Times New Roman, hitam, tanpa shading/warna pada teks,
-tabel, atau heading. Struktur: Judul -> Penulis -> Abstrak -> Kata Kunci ->
-I-V Bab -> Daftar Pustaka -> Lampiran. Gambar wordcloud disisipkan dari
-data/figures/.
+tabel, atau heading. Pengecualian: gambar wordcloud BERWARNA (kolormap
+viridis) sesuai permintaan — hanya gambar, teks/tabel tetap tanpa warna.
+Struktur: Judul -> Penulis -> Abstrak -> Kata Kunci -> I-V Bab -> Daftar
+Pustaka -> Lampiran. Gambar disisipkan dari data/figures/.
 
 Pakai: .venv/Scripts/python -m cv_analyzer.eval_harness.make_makalah_docx
 """
@@ -173,7 +174,8 @@ def build() -> Path:
             "mencocokkan kalimat kebutuhan dari deskripsi pekerjaan ke butir CV (ambang 0,50, "
             "terkalibrasi empiris) menghasilkan daftar kesenjangan.")
     _p(doc, "C. Wordcloud sebagai Luaran", bold=True, align=WD_ALIGN_PARAGRAPH.LEFT)
-    _p(doc, "Dua visualisasi grayscale (kolormap Greys, seed 42, deterministik) disediakan: "
+    _p(doc, "Dua visualisasi wordcloud (kolormap viridis — pengecualian berwarna untuk wordcloud; "
+            "seed 42, deterministik) disediakan: "
             "wordcloud isi CV dengan frekuensi kata konten setelah penggabungan alias ke bentuk "
             "kanonis (Gambar 1), dan wordcloud pesan temuan yang memperlihatkan tema keluhan "
             "paling sering (Gambar 2). Stopword gabungan EN+ID konsisten dengan modul identifikasi "
@@ -237,11 +239,13 @@ def build() -> Path:
             "contoh; penggabungan alias menyatukan \"js\" dan \"JavaScript\" menjadi satu konsep "
             "sehingga bobot visual mencerminkan konsep, bukan ejaan. Gambar 2 memperlihatkan tema "
             "temuan (duty, achievement, line) yang konsisten dengan fokus evaluasi kualitas "
-            "bahasa. Karena grayscale ber-seed, kedua gambar dapat direproduksi identik.")
+            "bahasa. Karena ber-seed, kedua gambar dapat direproduksi identik; bagian "
+            "non-wordcloud makalah tetap tanpa warna sesuai ketentuan, dengan pengecualian "
+            "berwarna hanya pada gambar wordcloud.")
     _figure(doc, FIGURES_DIR / "wordcloud_cv.png",
-            "Gambar 1. Wordcloud isi CV (grayscale, seed 42)")
+            "Gambar 1. Wordcloud isi CV (berwarna, seed 42)")
     _figure(doc, FIGURES_DIR / "wordcloud_findings.png",
-            "Gambar 2. Wordcloud pesan temuan analisis (grayscale, seed 42)")
+            "Gambar 2. Wordcloud pesan temuan analisis (berwarna, seed 42)")
     _p(doc, "E. Pembatasan", bold=True, align=WD_ALIGN_PARAGRAPH.LEFT)
     _p(doc, "(1) Sanitasi awal memakai pseudo-gold leksikal yang melebih-lebihkan recall; angka "
             "final menunggu anotasi tangan. (2) Gazeteer keterampilan berbias teknis; domain "
