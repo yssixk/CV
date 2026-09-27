@@ -98,6 +98,28 @@ def _render_report() -> None:
     spans = [(ev.start, ev.end) for f in report.findings for ev in f.evidence]
     st.markdown(_highlight_document(doc.text, spans), unsafe_allow_html=True)
 
+    # Wordcloud dari isi CV (fitur luaran makalah; hitam-putih, deterministik)
+    if st.button("Generate wordcloud dari CV ini"):
+        from cv_analyzer.explain.wordcloud_gen import generate_skill_cloud
+
+        out = result and _session_wordcloud(doc.text)
+        if out:
+            st.image(str(out), caption="Wordcloud isi CV (grayscale, seed tetap)")
+
+
+def _session_wordcloud(text: str):
+    """Generate (sekali per sesi) dan tampilkan wordcloud isi CV."""
+    from cv_analyzer.explain.wordcloud_gen import generate_skill_cloud
+
+    if "wc_path" not in st.session_state:
+        import uuid
+        from pathlib import Path
+
+        out_dir = Path(".wordclouds")   # ephemeral di host; tidak berisi PII (hanya frekuensi kata)
+        out_dir.mkdir(exist_ok=True)
+        st.session_state["wc_path"] = generate_skill_cloud([text], out_dir / f"wc_{uuid.uuid4().hex[:8]}.png")
+    return st.session_state["wc_path"]
+
     if report.relevance is not None:
         st.subheader("Relevance vs. job description")
         for area in report.relevance.areas:
